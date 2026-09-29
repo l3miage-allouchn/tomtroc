@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/../partials/header.php'; ?>
 
-<main>
+<main class="text-page">
     <h1>Politique de confidentialité</h1>
 
     <h2>Données collectées</h2>

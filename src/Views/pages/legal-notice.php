@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/../partials/header.php'; ?>
 
-<main>
+<main class="text-page">
     <h1>Mentions légales</h1>
 
     <h2>Éditeur du site</h2>

@@ -1181,3 +1181,65 @@ img {
     height: 49px;
     padding: 0;
 }
+
+/* =========================================================
+   15. Pages de texte (mentions légales, confidentialité) et page 404
+   ========================================================= */
+.text-page {
+    width: min(760px, 100% - 40px);
+    margin: 0 auto;
+    padding: 91px 0 104px;
+}
+
+.text-page h1 {
+    margin-bottom: 40px;
+    font-size: 36px;
+    line-height: 1.2;
+}
+
+.text-page h2 {
+    margin: 36px 0 12px;
+    color: var(--color-text);
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.text-page p,
+.text-page li {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.text-page p {
+    margin: 0 0 12px;
+}
+
+.text-page ul {
+    margin: 0 0 12px;
+    padding-left: 20px;
+}
+
+.error-page {
+    padding: 150px 20px;
+    text-align: center;
+}
+
+.error-page__code {
+    margin: 0;
+    color: var(--color-green);
+    font-family: var(--font-title);
+    font-size: 96px;
+    line-height: 1;
+}
+
+.error-page__title {
+    margin-top: 16px;
+    font-size: 36px;
+    line-height: 1.2;
+}
+
+.error-page__text {
+    margin: 16px 0 40px;
+    color: var(--color-grey);
+}
