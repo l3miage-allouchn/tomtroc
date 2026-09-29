@@ -49,7 +49,6 @@ class UserController
 
                     $user->setPseudo($_POST['pseudo']);
                     $user->setEmail($_POST['email']);
-                    $user->setBio($_POST['bio'] !== '' ? $_POST['bio'] : null);
 
                     // mot de passe vide = on garde l'ancien hash
                     if ($_POST['password'] !== '') {

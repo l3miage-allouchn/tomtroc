@@ -666,3 +666,236 @@ img {
     font-size: 12px;
     font-style: italic;
 }
+
+/* =========================================================
+   12. Mon compte et profil public
+   ========================================================= */
+
+/* bloc blanc aux coins arrondis (cartes et tableau) */
+.panel {
+    border-radius: 20px;
+    background-color: var(--color-white);
+}
+
+/* champ de formulaire sur fond gris-bleu (Mon compte) */
+.form-input--grey {
+    background-color: var(--color-input);
+}
+
+.account-page {
+    width: min(var(--content-width), 100% - 40px);
+    margin: 0 auto;
+    padding: 91px 0 104px;
+}
+
+.account-page__title {
+    margin-bottom: 51px;
+    font-size: 26px;
+    line-height: 1.2;
+}
+
+.account-page__cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 33px;
+    margin-bottom: 32px;
+}
+
+/* profil public : carte du membre à gauche (341px), tableau à droite */
+.profile-page {
+    display: grid;
+    grid-template-columns: 341px 1fr;
+    align-items: start;
+    gap: 28px;
+    width: min(var(--content-width), 100% - 40px);
+    margin: 0 auto;
+    padding: 103px 0 104px;
+}
+
+/* carte du membre */
+.member-card {
+    padding: 48px 20px 40px;
+    text-align: center;
+}
+
+/* la zone de la photo a la même hauteur avec ou sans le lien "modifier" */
+.member-card__photo {
+    min-height: 204px;
+}
+
+.member-card__avatar {
+    width: 135px;
+    height: 135px;
+    margin: 0 auto;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.member-card__edit {
+    display: inline-block;
+    margin-top: 4px;
+    color: var(--color-grey);
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* contour visible quand on arrive sur "modifier" au clavier */
+.member-card__photo input:focus + .member-card__edit,
+.member-card__edit:hover {
+    color: var(--color-text);
+}
+
+.member-card__separator {
+    width: 243px;
+    margin: 0 auto 46px;
+    border: 0;
+    border-top: 1px solid var(--color-line);
+}
+
+.member-card__pseudo {
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.member-card__since {
+    margin: 12px 0 0;
+    color: var(--color-grey);
+    font-size: 14px;
+}
+
+.member-card__library-label {
+    margin-top: 21px;
+}
+
+.member-card__count {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+
+.member-card__action {
+    margin-top: 45px;
+}
+
+/* formulaire des informations personnelles */
+.account-form {
+    padding: 34px 20px 36px 117px;
+}
+
+.account-form__title {
+    margin-bottom: 26px;
+    color: var(--color-text);
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.account-form .form-input {
+    width: 322px;
+    max-width: 100%;
+}
+
+/* tableau de la bibliothèque */
+.library {
+    overflow: hidden;
+}
+
+.library__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: left;
+}
+
+.library__table th {
+    height: 53px;
+    padding: 0 16px 0 0;
+    vertical-align: middle;
+}
+
+.library__table td {
+    height: 130px;
+    padding: 0 16px 0 0;
+    vertical-align: middle;
+}
+
+/* première colonne : 66px de marge à gauche, comme sur la maquette */
+.library__table th:first-child,
+.library__table td:first-child {
+    width: 224px;
+    padding-left: 66px;
+}
+
+.library__table th:nth-child(2) {
+    width: 181px;
+}
+
+.library__table th:nth-child(3) {
+    width: 175px;
+}
+
+.library__table th:nth-child(4) {
+    width: 213px;
+}
+
+.library__table th:nth-child(5) {
+    width: 146px;
+}
+
+/* une ligne sur deux en gris-bleu */
+.library__table tbody tr:nth-child(even) {
+    background-color: var(--color-input);
+}
+
+.library__photo {
+    width: 78px;
+    height: 78px;
+    object-fit: cover;
+}
+
+.library__link {
+    text-decoration: none;
+}
+
+.library__link:hover {
+    text-decoration: underline;
+}
+
+.library__description {
+    width: 127px;
+    margin: 0;
+    font-style: italic;
+    line-height: 15px;
+}
+
+.library__actions {
+    display: flex;
+    align-items: center;
+    gap: 29px;
+}
+
+.library__edit {
+    font-size: 12px;
+}
+
+/* le bouton "Supprimer" ressemble à un lien rouge (c'est un bouton car la suppression passe en POST) */
+.library__delete {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-danger);
+    font-family: var(--font-text);
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.library__empty {
+    padding: 40px;
+    color: var(--color-grey);
+    text-align: center;
+}

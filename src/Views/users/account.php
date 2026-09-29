@@ -1,57 +1,49 @@
 <?php require __DIR__ . '/../partials/header.php'; ?>
 
-<main>
-    <h1>Mon compte</h1>
+<main class="account-page">
+    <h1 class="account-page__title">Mon compte</h1>
 
-    <p><a href="/tomtroc/public/profil/<?= $user->getId() ?>">Voir mon profil public</a></p>
+    <?php // un seul formulaire pour les deux cartes : la photo (à gauche) et les informations (à droite) ?>
+    <form method="post" enctype="multipart/form-data" class="account-page__cards">
+        <?php
+        $member = $user;
+        $isOwnAccount = true;
+        require __DIR__ . '/../partials/member-card.php';
+        ?>
 
-    <h2>Mes informations</h2>
+        <section class="panel account-form">
+            <h2 class="account-form__title">Vos informations personnelles</h2>
 
-    <?php if ($error !== null): ?>
-        <p><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+            <?php if ($error !== null): ?>
+                <p class="form-error"><?= htmlspecialchars($error) ?></p>
+            <?php endif; ?>
 
-    <form method="post" enctype="multipart/form-data">
-        <img src="/tomtroc/public/<?= htmlspecialchars($user->getAvatar() ?? 'images/default-avatar.svg') ?>" alt="Votre photo de profil">
-        <label for="avatar">Modifier la photo de profil</label>
-        <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp">
+            <div class="form-field">
+                <label for="email" class="form-label">Adresse email</label>
+                <input type="email" id="email" name="email" class="form-input form-input--grey" value="<?= htmlspecialchars($user->getEmail()) ?>" autocomplete="email" required>
+            </div>
 
-        <label for="pseudo">Pseudo</label>
-        <input type="text" id="pseudo" name="pseudo" value="<?= htmlspecialchars($user->getPseudo()) ?>" required>
+            <div class="form-field">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" id="password" name="password" class="form-input form-input--grey" placeholder="••••••••" autocomplete="new-password" aria-describedby="password-help">
+                <p id="password-help" class="visually-hidden">Laissez vide pour garder votre mot de passe actuel.</p>
+            </div>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="<?= htmlspecialchars($user->getEmail()) ?>" required>
+            <div class="form-field">
+                <label for="pseudo" class="form-label">Pseudo</label>
+                <input type="text" id="pseudo" name="pseudo" class="form-input form-input--grey" value="<?= htmlspecialchars($user->getPseudo()) ?>" autocomplete="username" required>
+            </div>
 
-        <label for="password">Nouveau mot de passe (laisser vide pour ne pas le changer)</label>
-        <input type="password" id="password" name="password">
-
-        <label for="bio">Bio</label>
-        <textarea id="bio" name="bio"><?= htmlspecialchars($user->getBio() ?? '') ?></textarea>
-
-        <button type="submit">Enregistrer</button>
+            <button type="submit" class="button button--outline">Enregistrer</button>
+        </section>
     </form>
 
-    <h2>Ma bibliothèque</h2>
-
-    <p><a href="/tomtroc/public/livre/ajouter">Ajouter un livre</a></p>
-
-    <?php if (empty($books)): ?>
-        <p>Vous n'avez ajouté aucun livre pour le moment.</p>
-    <?php else: ?>
-        <ul>
-            <?php foreach ($books as $book): ?>
-                <li>
-                    <strong><?= htmlspecialchars($book->getTitle()) ?></strong>
-                    — <?= htmlspecialchars($book->getAuthor()) ?>
-                    (<?= htmlspecialchars($book->getStatus()) ?>)
-                    <a href="/tomtroc/public/livre/<?= $book->getId() ?>/modifier">Modifier</a>
-                    <form method="post" action="/tomtroc/public/livre/<?= $book->getId() ?>/supprimer">
-                        <button type="submit">Supprimer</button>
-                    </form>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    <?php
+    $showActions = true;
+    require __DIR__ . '/../partials/library-table.php';
+    ?>
 </main>
+
+<script src="/tomtroc/public/js/avatar-upload.js"></script>
 
 <?php require __DIR__ . '/../partials/footer.php'; ?>
