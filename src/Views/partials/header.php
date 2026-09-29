@@ -1,3 +1,11 @@
+<?php
+// nombre de messages non lus, pour la pastille du menu
+$unreadCount = 0;
+if (isset($_SESSION['user_id'])) {
+    $messageManager = new MessageManager();
+    $unreadCount = $messageManager->countUnread($_SESSION['user_id']);
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,7 +23,12 @@
             <a href="/tomtroc/public/livres">Nos livres à l'échange</a>
 
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="/tomtroc/public/messagerie">Messagerie</a>
+                <a href="/tomtroc/public/messagerie">
+                    Messagerie
+                    <?php if ($unreadCount > 0): ?>
+                        <span class="unread-badge"><?= $unreadCount ?></span>
+                    <?php endif; ?>
+                </a>
                 <a href="/tomtroc/public/mon-compte">Mon compte</a>
                 <a href="/tomtroc/public/deconnexion">Déconnexion</a>
             <?php else: ?>

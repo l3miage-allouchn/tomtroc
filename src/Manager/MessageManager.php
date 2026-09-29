@@ -82,6 +82,17 @@ class MessageManager
         ]);
     }
 
+    // nombre de messages reçus par cet utilisateur et pas encore lus
+    public function countUnread(int $userId): int
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM messages WHERE receiver_id = :receiver_id AND is_read = 0'
+        );
+        $statement->execute(['receiver_id' => $userId]);
+
+        return (int) $statement->fetchColumn();
+    }
+
     private function hydrate(array $row): Message
     {
         $message = new Message();

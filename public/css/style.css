@@ -2,3 +2,17 @@ body {
     margin: 0;
     font-family: sans-serif;
 }
+
+/* Pastille du nombre de messages non lus (menu) */
+.unread-badge {
+    display: inline-block;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 4px;
+    border-radius: 7px;
+    background-color: #000000;
+    color: #FFFFFF;
+    font-size: 8px;
+    line-height: 14px;
+    text-align: center;
+}
