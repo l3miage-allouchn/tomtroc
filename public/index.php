@@ -39,6 +39,11 @@ $router->add('POST', '/livre/ajouter', function () {
     (new BookController())->add();
 });
 
+// après /livre/ajouter : sinon "ajouter" serait pris pour un {id}
+$router->add('GET', '/livre/{id}', function ($id) {
+    (new BookController())->detail((int) $id);
+});
+
 $router->add('GET', '/livre/{id}/modifier', function ($id) {
     (new BookController())->edit((int) $id);
 });

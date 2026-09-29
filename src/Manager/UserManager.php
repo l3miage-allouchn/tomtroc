@@ -22,14 +22,20 @@ class UserManager
             return null;
         }
 
-        // on transforme le tableau brut renvoyé par la BDD en un vrai objet User
-        $user = new User();
-        $user->setId($row['id']);
-        $user->setPseudo($row['pseudo']);
-        $user->setEmail($row['email']);
-        $user->setPassword($row['password']);
+        return $this->hydrate($row);
+    }
 
-        return $user;
+    public function findById(int $id): ?User
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM users WHERE id = :id');
+        $statement->execute(['id' => $id]);
+        $row = $statement->fetch();
+
+        if ($row === false) {
+            return null;
+        }
+
+        return $this->hydrate($row);
     }
 
     public function create(User $user): int
@@ -48,5 +54,17 @@ class UserManager
 
         // lastInsertId() donne l'id auto-généré par MySQL pour la ligne qu'on vient de créer
         return (int) $this->pdo->lastInsertId();
+    }
+
+    // on transforme le tableau brut renvoyé par la BDD en un vrai objet User
+    private function hydrate(array $row): User
+    {
+        $user = new User();
+        $user->setId($row['id']);
+        $user->setPseudo($row['pseudo']);
+        $user->setEmail($row['email']);
+        $user->setPassword($row['password']);
+
+        return $user;
     }
 }

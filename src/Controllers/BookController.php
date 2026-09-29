@@ -101,4 +101,21 @@ class BookController
     require __DIR__ . '/../Views/books/list.php';
     }
 
+    public function detail(int $id): void
+    {
+        $bookManager = new BookManager();
+        $book = $bookManager->findById($id);
+
+        if ($book === null) {
+            header('Location: /tomtroc/public/livres');
+            return;
+        }
+
+        // le livre ne connaît que l'id de son propriétaire : on va chercher le User complet
+        $userManager = new UserManager();
+        $owner = $userManager->findById($book->getUserId());
+
+        require __DIR__ . '/../Views/books/detail.php';
+    }
+
 }
