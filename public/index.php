@@ -72,6 +72,17 @@ $router->add('GET', '/livres', function () {
     (new BookController())->list();
 });
 
+$router->add('GET', '/messagerie', function () {
+    (new MessageController())->inbox();
+});
+
+$router->add('GET', '/messagerie/{id}', function ($id) {
+    (new MessageController())->conversation((int) $id);
+});
+$router->add('POST', '/messagerie/{id}', function ($id) {
+    (new MessageController())->conversation((int) $id);
+});
+
 $basePath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
