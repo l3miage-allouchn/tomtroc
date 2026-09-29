@@ -28,6 +28,11 @@ $router->add('GET', '/deconnexion', function () {
     (new AuthController())->logout();
 });
 
+$router->add('GET', '/profil/{id}', function ($id) {
+    (new UserController())->show((int) $id);
+});
+
+
 $router->add('GET', '/mon-compte', function () {
     (new BookController())->myBooks();
 });

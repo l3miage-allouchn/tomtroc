@@ -64,6 +64,10 @@ class UserManager
         $user->setPseudo($row['pseudo']);
         $user->setEmail($row['email']);
         $user->setPassword($row['password']);
+        $user->setAvatar($row['avatar']);
+        $user->setBio($row['bio']);
+        $user->setCreatedAt(new DateTime($row['created_at']));
+
 
         return $user;
     }

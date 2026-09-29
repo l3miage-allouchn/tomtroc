@@ -6,6 +6,10 @@ class User
     private string $pseudo = '';
     private string $email = '';
     private string $password = '';
+    private ?string $avatar = null;
+    private ?string $bio = null;
+    private ?DateTime $createdAt = null;
+
 
     //getter et setter 
 
@@ -48,4 +52,34 @@ class User
     {
         $this->password = $password;
     }
+        public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): void
+    {
+        $this->avatar = $avatar;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): void
+    {
+        $this->bio = $bio;
+    }
+
+    public function getCreatedAt(): ?DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
 }
