@@ -83,6 +83,15 @@ $router->add('POST', '/messagerie/{id}', function ($id) {
     (new MessageController())->conversation((int) $id);
 });
 
+$router->add('GET', '/mentions-legales', function () {
+    (new PageController())->legalNotice();
+});
+
+$router->add('GET', '/confidentialite', function () {
+    (new PageController())->privacy();
+});
+
+
 $basePath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
