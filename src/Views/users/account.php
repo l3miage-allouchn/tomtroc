@@ -11,7 +11,11 @@
         <p><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
+        <img src="/tomtroc/public/<?= htmlspecialchars($user->getAvatar() ?? 'images/default-avatar.svg') ?>" alt="Votre photo de profil">
+        <label for="avatar">Modifier la photo de profil</label>
+        <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp">
+
         <label for="pseudo">Pseudo</label>
         <input type="text" id="pseudo" name="pseudo" value="<?= htmlspecialchars($user->getPseudo()) ?>" required>
 

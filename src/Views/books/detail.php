@@ -5,9 +5,7 @@
 
     <p>par <?= htmlspecialchars($book->getAuthor()) ?></p>
 
-    <?php if ($book->getImage() !== null): ?>
-        <img src="<?= htmlspecialchars($book->getImage()) ?>" alt="Couverture de <?= htmlspecialchars($book->getTitle()) ?>">
-    <?php endif; ?>
+    <img src="/tomtroc/public/<?= htmlspecialchars($book->getImage() ?? 'images/default-book.svg') ?>" alt="Couverture de <?= htmlspecialchars($book->getTitle()) ?>">
 
     <p><?= $book->getStatus() === 'available' ? 'Disponible à l\'échange' : 'Non disponible' ?></p>
 

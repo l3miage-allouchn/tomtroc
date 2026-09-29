@@ -2,19 +2,6 @@
 
 class BookController
 {
-    // public function myBooks(): void
-    // {
-    //     if (!isset($_SESSION['user_id'])) {
-    //         header('Location: /tomtroc/public/connexion');
-    //         return;
-    //     }
-
-    //     $bookManager = new BookManager();
-    //     $books = $bookManager->findByUserId($_SESSION['user_id']);
-
-    //     require __DIR__ . '/../Views/books/my-books.php';
-    // }
-
     public function add(): void
     {
         if (!isset($_SESSION['user_id'])) {
@@ -22,23 +9,31 @@ class BookController
             return;
         }
 
+        $book = new Book();
+        $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $book = new Book();
             $book->setUserId($_SESSION['user_id']);
             $book->setTitle($_POST['title']);
             $book->setAuthor($_POST['author']);
             $book->setDescription($_POST['description']);
-            $book->setImage($_POST['image'] !== '' ? $_POST['image'] : null);
             $book->setStatus($_POST['status']);
 
-            $bookManager = new BookManager();
-            $bookManager->create($book);
+            try {
+                $imageUploader = new ImageUploader();
+                $book->setImage($imageUploader->upload($_FILES['image'] ?? null, 'books'));
 
-            header('Location: /tomtroc/public/mon-compte');
-            return;
+                $bookManager = new BookManager();
+                $bookManager->create($book);
+
+                header('Location: /tomtroc/public/mon-compte');
+                return;
+            } catch (RuntimeException $exception) {
+                // image refusée : on réaffiche le formulaire avec le message
+                $error = $exception->getMessage();
+            }
         }
 
-        $book = new Book();
         require __DIR__ . '/../Views/books/form.php';
     }
 
@@ -57,17 +52,31 @@ class BookController
             return;
         }
 
+        $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $book->setTitle($_POST['title']);
             $book->setAuthor($_POST['author']);
             $book->setDescription($_POST['description']);
-            $book->setImage($_POST['image'] !== '' ? $_POST['image'] : null);
             $book->setStatus($_POST['status']);
 
-            $bookManager->update($book);
+            try {
+                $imageUploader = new ImageUploader();
+                $newImage = $imageUploader->upload($_FILES['image'] ?? null, 'books');
 
-            header('Location: /tomtroc/public/mon-compte');
-            return;
+                // nouvelle image envoyée : on remplace l'ancienne
+                if ($newImage !== null) {
+                    $imageUploader->delete($book->getImage());
+                    $book->setImage($newImage);
+                }
+
+                $bookManager->update($book);
+
+                header('Location: /tomtroc/public/mon-compte');
+                return;
+            } catch (RuntimeException $exception) {
+                $error = $exception->getMessage();
+            }
         }
 
         require __DIR__ . '/../Views/books/form.php';
@@ -84,21 +93,24 @@ class BookController
         $book = $bookManager->findById($id);
 
         if ($book !== null && $book->getUserId() === $_SESSION['user_id']) {
+            // on supprime aussi le fichier image, sinon il resterait sur le disque
+            $imageUploader = new ImageUploader();
+            $imageUploader->delete($book->getImage());
+
             $bookManager->delete($id);
         }
 
         header('Location: /tomtroc/public/mon-compte');
     }
 
-
     public function list(): void
     {
-    $search = $_GET['q'] ?? null;
+        $search = $_GET['q'] ?? null;
 
-    $bookManager = new BookManager();
-    $books = $bookManager->findAvailable($search);
+        $bookManager = new BookManager();
+        $books = $bookManager->findAvailable($search);
 
-    require __DIR__ . '/../Views/books/list.php';
+        require __DIR__ . '/../Views/books/list.php';
     }
 
     public function detail(int $id): void
@@ -117,5 +129,4 @@ class BookController
 
         require __DIR__ . '/../Views/books/detail.php';
     }
-
 }

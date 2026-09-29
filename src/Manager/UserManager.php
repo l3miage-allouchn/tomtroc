@@ -56,12 +56,11 @@ class UserManager
         return (int) $this->pdo->lastInsertId();
     }
 
-    
-        public function update(User $user): void
+    public function update(User $user): void
     {
         $statement = $this->pdo->prepare(
             'UPDATE users
-             SET pseudo = :pseudo, email = :email, password = :password, bio = :bio
+             SET pseudo = :pseudo, email = :email, password = :password, avatar = :avatar, bio = :bio
              WHERE id = :id'
         );
 
@@ -69,6 +68,7 @@ class UserManager
             'pseudo' => $user->getPseudo(),
             'email' => $user->getEmail(),
             'password' => $user->getPassword(),
+            'avatar' => $user->getAvatar(),
             'bio' => $user->getBio(),
             'id' => $user->getId(),
         ]);

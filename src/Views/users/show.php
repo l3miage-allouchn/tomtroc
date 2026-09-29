@@ -3,9 +3,7 @@
 <main>
     <h1><?= htmlspecialchars($user->getPseudo()) ?></h1>
 
-    <?php if ($user->getAvatar() !== null): ?>
-        <img src="<?= htmlspecialchars($user->getAvatar()) ?>" alt="Avatar de <?= htmlspecialchars($user->getPseudo()) ?>">
-    <?php endif; ?>
+    <img src="/tomtroc/public/<?= htmlspecialchars($user->getAvatar() ?? 'images/default-avatar.svg') ?>" alt="Avatar de <?= htmlspecialchars($user->getPseudo()) ?>">
 
     <p>Membre depuis le <?= $user->getCreatedAt()->format('d/m/Y') ?></p>
 
