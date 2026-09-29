@@ -1,24 +1,36 @@
 <?php require __DIR__ . '/../partials/header.php'; ?>
 
-<main>
-    <h1>Inscription</h1>
+<main class="auth">
+    <div class="auth__content">
+        <h1 class="auth__title">Inscription</h1>
 
-    <?php if (isset($error)): ?>
-        <p class="error"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+        <?php if (isset($error)): ?>
+            <p class="form-error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-    <form method="post" action="/tomtroc/public/inscription">
-        <label for="pseudo">Pseudo</label>
-        <input type="text" id="pseudo" name="pseudo" required>
+        <form method="post" action="/tomtroc/public/inscription" class="auth__form">
+            <div class="form-field">
+                <label for="pseudo" class="form-label">Pseudo</label>
+                <input type="text" id="pseudo" name="pseudo" class="form-input" autocomplete="username" required>
+            </div>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+            <div class="form-field">
+                <label for="email" class="form-label">Adresse email</label>
+                <input type="email" id="email" name="email" class="form-input" autocomplete="email" required>
+            </div>
 
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" name="password" required>
+            <div class="form-field">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" id="password" name="password" class="form-input" autocomplete="new-password" required>
+            </div>
 
-        <button type="submit">S'inscrire</button>
-    </form>
+            <button type="submit" class="button button--block">S'inscrire</button>
+        </form>
+
+        <p class="auth__switch">Déjà inscrit ? <a href="/tomtroc/public/connexion">Connectez-vous</a></p>
+    </div>
+
+    <div class="auth__visual"></div>
 </main>
 
 <?php require __DIR__ . '/../partials/footer.php'; ?>

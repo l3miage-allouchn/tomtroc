@@ -12,6 +12,7 @@
     --color-background: #FAF9F7;
     --color-white: #FFFFFF;
     --color-input: #EDF2F6;
+    --color-line: #F0F0F0;
     --color-available: #6DC5A1;
     --color-unavailable: #C56D6D;
     --color-danger: #CB2D2D;
@@ -149,4 +150,104 @@ img {
 
 .site-footer__link:hover {
     text-decoration: underline;
+}
+
+/* =========================================================
+   5. Composants communs : boutons, formulaires
+   ========================================================= */
+.button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 21px 38px;
+    border: 1px solid var(--color-green);
+    border-radius: 10px;
+    background-color: var(--color-green);
+    color: var(--color-white);
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.button:hover {
+    border-color: var(--color-green-dark);
+    background-color: var(--color-green-dark);
+}
+
+/* bouton qui prend toute la largeur de son bloc */
+.button--block {
+    width: 100%;
+}
+
+.form-field {
+    margin-bottom: 32px;
+}
+
+.form-label {
+    display: block;
+    margin: 0 0 10px;
+    color: var(--color-grey);
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.form-input {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px;
+    border: 1px solid #F0F0F0;
+    border-radius: 6px;
+    background-color: var(--color-white);
+    color: var(--color-text);
+    font-family: var(--font-text);
+    font-size: 14px;
+}
+
+/* contour vert visible quand on est dans le champ (accessibilité clavier) */
+.form-input:focus {
+    outline: 2px solid var(--color-green);
+    outline-offset: 1px;
+}
+
+.form-error {
+    margin: 0 0 24px;
+    color: var(--color-danger);
+    font-size: 14px;
+}
+
+/* =========================================================
+   6. Connexion et inscription
+   ========================================================= */
+.auth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 886px;
+}
+
+/* le formulaire commence à la même position que le logo (150px sur 1440px) */
+.auth__content {
+    padding: 128px 20px 60px max(20px, calc(100% - 570px));
+}
+
+.auth__title {
+    margin-bottom: 52px;
+    font-size: 36px;
+}
+
+.auth__form {
+    width: 322px;
+    max-width: 100%;
+}
+
+.auth__switch {
+    margin: 40px 0 0;
+    font-size: 14px;
+}
+
+/* photo décorative : elle couvre toute la moitié droite */
+.auth__visual {
+    background: url('../images/auth.jpg') center / cover no-repeat;
 }
