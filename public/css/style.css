@@ -983,3 +983,201 @@ img {
     width: 322px;
     margin-top: 12px;
 }
+
+/* =========================================================
+   14. Messagerie
+   ========================================================= */
+
+/* photo de profil ronde */
+.avatar {
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar--48 {
+    width: 48px;
+    height: 48px;
+}
+
+.avatar--24 {
+    width: 24px;
+    height: 24px;
+}
+
+/* liste des conversations (308px) à gauche, fil de discussion à droite
+   le fond beige prend toute la largeur, le contenu reste aligné sur les 1140px du site */
+.messaging {
+    display: grid;
+    grid-template-columns: 308px 1fr;
+    column-gap: 44px;
+    height: 893px;
+    padding: 0 max(20px, calc((100% - var(--content-width)) / 2));
+    background-color: var(--color-beige);
+}
+
+.messaging__sidebar {
+    overflow-y: auto;
+    padding-top: 57px;
+    background-color: var(--color-background);
+}
+
+.messaging__title {
+    margin: 0 34px 29px;
+    font-size: 26px;
+    line-height: 1.2;
+}
+
+.messaging__empty {
+    padding: 0 34px;
+    color: var(--color-grey);
+    font-size: 14px;
+}
+
+.conversation-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.conversation-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 34px;
+    text-decoration: none;
+}
+
+.conversation-list__item:hover,
+.conversation-list__item--current {
+    background-color: var(--color-white);
+}
+
+.conversation-list__item--unread .conversation-list__name {
+    font-weight: 600;
+}
+
+/* min-width: 0 permet au texte de se couper avec "..." au lieu d'élargir la colonne */
+.conversation-list__text {
+    flex: 1;
+    min-width: 0;
+}
+
+.conversation-list__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 14px;
+}
+
+.conversation-list__date {
+    font-size: 12px;
+}
+
+.conversation-list__preview {
+    display: block;
+    margin-top: 7px;
+    overflow: hidden;
+    color: var(--color-grey);
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* fil de discussion : l'en-tête en haut, les messages au milieu, le formulaire en bas */
+.thread {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 35px 0 98px;
+}
+
+.thread__header {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.thread__contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+/* column-reverse : la zone de défilement démarre en bas, sur les messages les plus récents */
+.thread__scroll {
+    display: flex;
+    flex: 1;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+    margin: 20px 0 30px;
+}
+
+.thread__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 29px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* mes messages sont alignés à droite */
+.message--mine {
+    align-items: flex-end;
+}
+
+.message__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 5px;
+    color: var(--color-grey);
+    font-size: 12px;
+}
+
+.message__bubble {
+    width: 500px;
+    max-width: 100%;
+    margin: 0;
+    padding: 11px 18px;
+    background-color: var(--color-white);
+    font-size: 12px;
+    line-height: 15px;
+    overflow-wrap: break-word;
+}
+
+.message--mine .message__bubble {
+    background-color: var(--color-input);
+}
+
+.thread__placeholder {
+    margin: auto;
+    color: var(--color-grey);
+    font-size: 14px;
+    text-align: center;
+}
+
+.thread__form {
+    display: flex;
+    gap: 21px;
+}
+
+.thread__input {
+    flex: 1;
+    height: 49px;
+}
+
+.thread__send {
+    width: 132px;
+    height: 49px;
+    padding: 0;
+}
