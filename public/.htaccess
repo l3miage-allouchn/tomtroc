@@ -1,3 +1,4 @@
+# Fait passer les URL par index.php (sauf les vrais fichiers et dossiers)
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

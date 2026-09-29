@@ -1,5 +1,7 @@
 <?php
 
+
+//charger les classes tout seul 
 spl_autoload_register(function (string $className): void {
     $folders = [
         __DIR__ . '/../Controllers/',

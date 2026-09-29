@@ -35,6 +35,11 @@ class AuthController
         require __DIR__ . '/../Views/auth/register.php';
     }
 
+
+
+    //password123  ──> password_hash( )──►  $2y$10$W2DncNKoR4Vg41BBD0Z.fOK9PBAMVTCTOuvlaikA/WlvtWul2ZlIa
+
+
     public function login(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
