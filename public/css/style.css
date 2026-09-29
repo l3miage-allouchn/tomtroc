@@ -899,3 +899,87 @@ img {
     color: var(--color-grey);
     text-align: center;
 }
+
+/* =========================================================
+   13. Formulaire d'un livre (ajout et modification)
+   ========================================================= */
+.book-form-page {
+    width: min(var(--content-width), 100% - 40px);
+    margin: 0 auto;
+    padding: 40px 0 92px;
+}
+
+.back-link {
+    color: var(--color-grey);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.book-form-page__title {
+    margin: 25px 0 24px;
+    font-size: 26px;
+    line-height: 1.2;
+}
+
+/* photo à gauche (488px), champs à droite (435px) */
+.book-form {
+    display: grid;
+    grid-template-columns: 488px 435px;
+    column-gap: 118px;
+    padding: 56px 50px 68px;
+}
+
+.book-form__photo {
+    display: flex;
+    flex-direction: column;
+}
+
+.book-form__image {
+    width: 488px;
+    height: 488px;
+    object-fit: cover;
+}
+
+.book-form__photo-link {
+    align-self: flex-end;
+    margin-top: 23px;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* contour visible quand on arrive sur "Modifier la photo" au clavier */
+.book-form__photo input:focus + .book-form__photo-link,
+.book-form__photo-link:hover {
+    color: var(--color-green);
+}
+
+.book-form .form-label {
+    margin-bottom: 10px;
+}
+
+.form-textarea {
+    height: 356px;
+    padding: 16px 14px;
+    line-height: 17px;
+    resize: vertical;
+}
+
+/* liste déroulante : on remplace la flèche du navigateur par celle de la maquette */
+.form-select {
+    padding-right: 44px;
+    appearance: none;
+    background-image: url('../images/icon-chevron.svg');
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    cursor: pointer;
+}
+
+.book-form__submit {
+    width: 322px;
+    margin-top: 12px;
+}

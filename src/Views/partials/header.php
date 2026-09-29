@@ -8,6 +8,11 @@ if (isset($_SESSION['user_id'])) {
 
 // l'adresse de la page en cours, pour mettre le bon lien du menu en gras
 $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// ajouter ou modifier un livre se fait depuis "Mon compte" : c'est ce lien qui est actif
+$isBookFormPage = preg_match('#^/tomtroc/public/livre/(ajouter|\d+/modifier)$#', $currentPath) === 1;
+$isBooksPage = str_starts_with($currentPath, '/tomtroc/public/livre') && !$isBookFormPage;
+$isAccountPage = str_starts_with($currentPath, '/tomtroc/public/mon-compte') || $isBookFormPage;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -29,7 +34,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
             <nav class="site-header__nav" aria-label="Navigation principale">
                 <a href="/tomtroc/public/" class="site-header__link <?= $currentPath === '/tomtroc/public/' ? 'site-header__link--active' : '' ?>">Accueil</a>
-                <a href="/tomtroc/public/livres" class="site-header__link <?= str_starts_with($currentPath, '/tomtroc/public/livre') ? 'site-header__link--active' : '' ?>">Nos livres à l'échange</a>
+                <a href="/tomtroc/public/livres" class="site-header__link <?= $isBooksPage ? 'site-header__link--active' : '' ?>">Nos livres à l'échange</a>
             </nav>
 
             <nav class="site-header__nav site-header__nav--account" aria-label="Espace membre">
@@ -40,7 +45,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                         <span class="unread-badge"><?= $unreadCount ?></span>
                     <?php endif; ?>
                 </a>
-                <a href="/tomtroc/public/mon-compte" class="site-header__link <?= str_starts_with($currentPath, '/tomtroc/public/mon-compte') ? 'site-header__link--active' : '' ?>">
+                <a href="/tomtroc/public/mon-compte" class="site-header__link <?= $isAccountPage ? 'site-header__link--active' : '' ?>">
                     <img src="/tomtroc/public/images/icon-mon-compte.svg" alt="" width="10" height="13">
                     Mon compte
                 </a>
