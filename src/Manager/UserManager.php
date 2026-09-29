@@ -38,6 +38,21 @@ class UserManager
         return $this->hydrate($row);
     }
 
+    // les propriétaires d'une liste de livres, rangés par id : [id => User]
+    // un même membre peut avoir plusieurs livres : on ne le cherche qu'une fois
+    public function findOwnersOf(array $books): array
+    {
+        $owners = [];
+        foreach ($books as $book) {
+            $ownerId = $book->getUserId();
+            if (!isset($owners[$ownerId])) {
+                $owners[$ownerId] = $this->findById($ownerId);
+            }
+        }
+
+        return $owners;
+    }
+
     public function create(User $user): int
     {
         

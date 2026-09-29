@@ -92,26 +92,44 @@ class BookManager
         return $book;
     }
 
-    public function findAvailable(?string $search = null): array
+    // tous les livres, du plus récent au plus ancien
+    // avec une recherche facultative sur le titre
+    public function findAll(?string $search = null): array
     {
-    $sql = 'SELECT * FROM books WHERE status = :status';
-    $params = ['status' => 'available'];
+        $sql = 'SELECT * FROM books';
+        $params = [];
 
-    if ($search !== null && $search !== '') {
-        $sql .= ' AND title LIKE :search';
-        $params['search'] = '%' . $search . '%';
+        if ($search !== null && $search !== '') {
+            $sql .= ' WHERE title LIKE :search';
+            $params['search'] = '%' . $search . '%';
+        }
+
+        $sql .= ' ORDER BY created_at DESC, id DESC';
+
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute($params);
+
+        $books = [];
+        foreach ($statement->fetchAll() as $row) {
+            $books[] = $this->hydrate($row);
+        }
+
+        return $books;
     }
 
-    $statement = $this->pdo->prepare($sql);
-    $statement->execute($params);
+    // les derniers livres ajoutés (pour la page d'accueil)
+    public function findLatest(int $limit): array
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM books ORDER BY created_at DESC, id DESC LIMIT :limit');
+        // LIMIT attend un vrai nombre : on précise le type à PDO
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->execute();
 
-    $books = [];
-    foreach ($statement->fetchAll() as $row) {
-        $books[] = $this->hydrate($row);
+        $books = [];
+        foreach ($statement->fetchAll() as $row) {
+            $books[] = $this->hydrate($row);
+        }
+
+        return $books;
     }
-
-    return $books;
-    }
-
-
 }

@@ -1,27 +1,24 @@
 <?php require __DIR__ . '/../partials/header.php'; ?>
 
-<main>
-    <h1>Nos livres à l'échange</h1>
+<main class="books-page">
+    <div class="books-page__header">
+        <h1 class="books-page__title">Nos livres à l'échange</h1>
 
-    <form method="get">
-        <label for="q">Rechercher un titre</label>
-        <input type="text" id="q" name="q" value="<?= htmlspecialchars($search ?? '') ?>">
-        <button type="submit">Rechercher</button>
-    </form>
+        <form method="get" class="search" role="search">
+            <label for="q" class="visually-hidden">Rechercher un livre par son titre</label>
+            <input type="search" id="q" name="q" class="form-input search__input" placeholder="Rechercher un livre" value="<?= htmlspecialchars($search ?? '') ?>">
+        </form>
+    </div>
 
     <?php if (empty($books)): ?>
-        <p>Aucun livre trouvé.</p>
+        <p class="books-page__empty">Aucun livre ne correspond à votre recherche.</p>
     <?php else: ?>
-        <ul>
+        <h2 class="visually-hidden">Tous les livres</h2>
+        <div class="book-grid">
             <?php foreach ($books as $book): ?>
-                <li>
-                    <a href="/tomtroc/public/livre/<?= $book->getId() ?>">
-                        <?= htmlspecialchars($book->getTitle()) ?>
-                    </a>
-                    — <?= htmlspecialchars($book->getAuthor()) ?>
-                </li>
+                <?php require __DIR__ . '/../partials/book-card.php'; ?>
             <?php endforeach; ?>
-        </ul>
+        </div>
     <?php endif; ?>
 </main>
 

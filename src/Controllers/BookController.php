@@ -108,7 +108,10 @@ class BookController
         $search = $_GET['q'] ?? null;
 
         $bookManager = new BookManager();
-        $books = $bookManager->findAvailable($search);
+        $books = $bookManager->findAll($search);
+
+        $userManager = new UserManager();
+        $owners = $userManager->findOwnersOf($books);
 
         require __DIR__ . '/../Views/books/list.php';
     }
