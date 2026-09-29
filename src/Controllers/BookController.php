@@ -2,18 +2,18 @@
 
 class BookController
 {
-    public function myBooks(): void
-    {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /tomtroc/public/connexion');
-            return;
-        }
+    // public function myBooks(): void
+    // {
+    //     if (!isset($_SESSION['user_id'])) {
+    //         header('Location: /tomtroc/public/connexion');
+    //         return;
+    //     }
 
-        $bookManager = new BookManager();
-        $books = $bookManager->findByUserId($_SESSION['user_id']);
+    //     $bookManager = new BookManager();
+    //     $books = $bookManager->findByUserId($_SESSION['user_id']);
 
-        require __DIR__ . '/../Views/books/my-books.php';
-    }
+    //     require __DIR__ . '/../Views/books/my-books.php';
+    // }
 
     public function add(): void
     {

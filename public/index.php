@@ -33,9 +33,17 @@ $router->add('GET', '/profil/{id}', function ($id) {
 });
 
 
+// $router->add('GET', '/mon-compte', function () {
+//     (new BookController())->myBooks();
+// });
+
 $router->add('GET', '/mon-compte', function () {
-    (new BookController())->myBooks();
+    (new UserController())->account();
 });
+$router->add('POST', '/mon-compte', function () {
+    (new UserController())->account();
+});
+
 
 $router->add('GET', '/livre/ajouter', function () {
     (new BookController())->add();

@@ -56,6 +56,24 @@ class UserManager
         return (int) $this->pdo->lastInsertId();
     }
 
+    
+        public function update(User $user): void
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE users
+             SET pseudo = :pseudo, email = :email, password = :password, bio = :bio
+             WHERE id = :id'
+        );
+
+        $statement->execute([
+            'pseudo' => $user->getPseudo(),
+            'email' => $user->getEmail(),
+            'password' => $user->getPassword(),
+            'bio' => $user->getBio(),
+            'id' => $user->getId(),
+        ]);
+    }
+
     // on transforme le tableau brut renvoyé par la BDD en un vrai objet User
     private function hydrate(array $row): User
     {
