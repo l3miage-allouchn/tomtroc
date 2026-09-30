@@ -1,0 +1,12 @@
+# fichiers à ne pas copier dans l'image Docker
+.git
+.github
+.env
+config.php
+docs
+tests
+note.md
+public/uploads
+docker-compose.yml
+Dockerfile
+.dockerignore
