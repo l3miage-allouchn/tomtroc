@@ -40,6 +40,7 @@
 
     <section class="thread">
         <?php if ($otherUser === null): ?>
+            <h2 class="visually-hidden">Conversation</h2>
             <p class="thread__placeholder">Sélectionnez une conversation pour afficher les messages.</p>
         <?php else: ?>
             <h2 class="thread__header">
