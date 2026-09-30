@@ -15,10 +15,10 @@ permissions:
 jobs:
   lint:
     name: Lint (syntaxe PHP et PSR-12)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Installer PHP 8.2 et PHP_CodeSniffer
         uses: shivammathur/setup-php@v2
@@ -37,10 +37,10 @@ jobs:
     name: Tests unitaires (PHPUnit)
     # ne démarre que si le lint a réussi
     needs: lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Installer PHP 8.2 et PHPUnit
         uses: shivammathur/setup-php@v2
