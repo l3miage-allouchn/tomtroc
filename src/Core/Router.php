@@ -30,13 +30,7 @@ class Router
             }
         }
 
-        // http_response_code(404);
-        // echo 'Page non trouvée.';
-
-              // aucune route ne correspond : page 404
+        // aucune route ne correspond : page 404
         (new ErrorController())->notFound();
     }
-
-
-    }
-
+}

@@ -38,7 +38,7 @@ class BookManager
     public function create(Book $book): int
     {
         $statement = $this->pdo->prepare(
-            'INSERT INTO books (user_id, title, author, description, image, status) 
+            'INSERT INTO books (user_id, title, author, description, image, status)
              VALUES (:user_id, :title, :author, :description, :image, :status)'
         );
 
@@ -57,8 +57,8 @@ class BookManager
     public function update(Book $book): void
     {
         $statement = $this->pdo->prepare(
-            'UPDATE books 
-             SET title = :title, author = :author, description = :description, image = :image, status = :status 
+            'UPDATE books
+             SET title = :title, author = :author, description = :description, image = :image, status = :status
              WHERE id = :id'
         );
 

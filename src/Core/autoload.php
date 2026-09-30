@@ -1,7 +1,6 @@
 <?php
 
-
-//charger les classes tout seul 
+// charge automatiquement les classes, sans require à la main
 spl_autoload_register(function (string $className): void {
     $folders = [
         __DIR__ . '/../Controllers/',

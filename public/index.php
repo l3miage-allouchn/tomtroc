@@ -32,18 +32,12 @@ $router->add('GET', '/profil/{id}', function ($id) {
     (new UserController())->show((int) $id);
 });
 
-
-// $router->add('GET', '/mon-compte', function () {
-//     (new BookController())->myBooks();
-// });
-
 $router->add('GET', '/mon-compte', function () {
     (new UserController())->account();
 });
 $router->add('POST', '/mon-compte', function () {
     (new UserController())->account();
 });
-
 
 $router->add('GET', '/livre/ajouter', function () {
     (new BookController())->add();
@@ -90,7 +84,6 @@ $router->add('GET', '/mentions-legales', function () {
 $router->add('GET', '/confidentialite', function () {
     (new PageController())->privacy();
 });
-
 
 $basePath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);

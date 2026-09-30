@@ -10,8 +10,7 @@ class User
     private ?string $bio = null;
     private ?DateTime $createdAt = null;
 
-
-    //getter et setter 
+    // getters et setters
 
     public function getId(): ?int
     {
@@ -81,5 +80,4 @@ class User
     {
         $this->createdAt = $createdAt;
     }
-
 }

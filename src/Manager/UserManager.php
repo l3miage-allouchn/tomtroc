@@ -55,7 +55,6 @@ class UserManager
 
     public function create(User $user): int
     {
-        
         $statement = $this->pdo->prepare(
             'INSERT INTO users (pseudo, email, password) VALUES (:pseudo, :email, :password)'
         );
@@ -100,7 +99,6 @@ class UserManager
         $user->setAvatar($row['avatar']);
         $user->setBio($row['bio']);
         $user->setCreatedAt(new DateTime($row['created_at']));
-
 
         return $user;
     }
