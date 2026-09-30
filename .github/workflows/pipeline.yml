@@ -1,5 +1,12 @@
 # Pipeline CI de TomTroc (GitHub Actions)
 # se lance à chaque push sur la branche devsecops, et à chaque pull request vers elle
+#
+#   lint ──> tests ──┐
+#   secrets ─────────┼──> build + scan de l'image
+#   sast ────────────┘
+#
+# les actions GitHub sont épinglées sur l'empreinte (SHA) de leur code, et non sur une étiquette comme "v5" :
+# une étiquette peut être déplacée par son auteur vers un autre code (attaque de la chaîne d'approvisionnement)
 name: Pipeline DevSecOps
 
 on:
@@ -18,10 +25,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Installer PHP 8.2 et PHP_CodeSniffer
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.2'
           tools: phpcs
@@ -40,10 +47,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Installer PHP 8.2 et PHPUnit
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.2'
           tools: phpunit:11
@@ -52,3 +59,55 @@ jobs:
 
       - name: Lancer les tests (règles dans phpunit.xml)
         run: phpunit --testdox
+
+  secrets:
+    name: Secrets (Gitleaks)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Récupérer le code et tout l'historique Git
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          # 0 = tout l'historique : un mot de passe commité puis supprimé reste dans les anciens commits
+          fetch-depth: 0
+
+      - name: Chercher des mots de passe, clés ou jetons dans tous les commits
+        run: docker run --rm -v "$PWD":/repo ghcr.io/gitleaks/gitleaks:v8.28.0 git /repo --redact -v
+
+  sast:
+    name: Analyse du code (Semgrep)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Chercher les failles (règles PHP et OWASP Top 10)
+        # --error : le job échoue si une faille est trouvée
+        run: >-
+          docker run --rm -v "$PWD":/src -w /src semgrep/semgrep:1.140.0
+          semgrep scan --config p/php --config p/owasp-top-ten
+          --metrics=off --error
+          --exclude=tests --exclude=sql --exclude=docs
+
+  build:
+    name: Build et scan de l'image (Docker, Trivy)
+    # ne démarre que si les tests, la recherche de secrets et l'analyse du code ont réussi
+    needs: [tests, secrets, sast]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Construire l'image Docker
+        run: docker build -t tomtroc:${{ github.sha }} .
+
+      - name: Vérifier la configuration du Dockerfile (Trivy)
+        run: >-
+          docker run --rm -v "$PWD":/src aquasec/trivy:0.67.2
+          config --severity HIGH,CRITICAL --exit-code 1 /src/Dockerfile
+
+      - name: Chercher les failles connues dans l'image (Trivy)
+        # --ignore-unfixed : on bloque seulement les failles pour lesquelles une correction existe
+        run: >-
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.67.2
+          image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
+          tomtroc:${{ github.sha }}

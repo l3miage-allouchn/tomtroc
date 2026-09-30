@@ -27,7 +27,8 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "8080:80"
+      # port 8080 du PC -> port 8080 du conteneur (Apache ne tourne pas en root)
+      - "8080:8080"
     environment:
       DB_HOST: db
       DB_NAME: tomtroc
