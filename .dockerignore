@@ -10,3 +10,5 @@ public/uploads
 docker-compose.yml
 Dockerfile
 .dockerignore
+phpcs.xml
+phpunit.xml

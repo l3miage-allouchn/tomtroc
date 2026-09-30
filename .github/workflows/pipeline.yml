@@ -1,0 +1,54 @@
+# Pipeline CI de TomTroc (GitHub Actions)
+# se lance à chaque push sur la branche devsecops, et à chaque pull request vers elle
+name: Pipeline DevSecOps
+
+on:
+  push:
+    branches: [devsecops]
+  pull_request:
+    branches: [devsecops]
+
+# droits minimum : le pipeline peut seulement lire le code
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint (syntaxe PHP et PSR-12)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer PHP 8.2 et PHP_CodeSniffer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: phpcs
+          coverage: none
+
+      - name: Vérifier la syntaxe de chaque fichier PHP (php -l)
+        run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Vérifier le style PSR-12 (règles dans phpcs.xml)
+        run: phpcs
+
+  tests:
+    name: Tests unitaires (PHPUnit)
+    # ne démarre que si le lint a réussi
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer PHP 8.2 et PHPUnit
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: phpunit:11
+          extensions: mbstring
+          coverage: none
+
+      - name: Lancer les tests (règles dans phpunit.xml)
+        run: phpunit --testdox

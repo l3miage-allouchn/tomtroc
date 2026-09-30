@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- règles de style vérifiées par PHP_CodeSniffer (étape "lint" du pipeline) -->
+<ruleset name="TomTroc">
+    <description>Norme PSR-12, adaptée au projet TomTroc</description>
+
+    <!-- code PHP vérifié : les classes, le point d'entrée, les tests et la config Docker
+         les vues (src/Views) sont des gabarits qui mélangent HTML et PHP : la norme PSR-12 ne s'y applique pas -->
+    <file>src/Core</file>
+    <file>src/Controllers</file>
+    <file>src/Manager</file>
+    <file>src/Entity</file>
+    <file>public/index.php</file>
+    <file>tests</file>
+    <file>docker</file>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <!-- les avertissements (lignes longues) sont affichés, mais ne font pas échouer le pipeline -->
+    <config name="ignore_warnings_on_exit" value="1"/>
+
+    <rule ref="PSR12">
+        <!-- le projet n'utilise pas de namespaces : l'autoload charge les classes par dossier
+             (choix autorisé par le cahier des charges : "usage ou non d'un autoloader / namespaces") -->
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+    </rule>
+</ruleset>
