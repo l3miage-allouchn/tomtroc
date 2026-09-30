@@ -11,7 +11,7 @@
         <form method="post" action="/tomtroc/public/connexion" class="auth__form">
             <div class="form-field">
                 <label for="email" class="form-label">Adresse email</label>
-                <input type="email" id="email" name="email" class="form-input" autocomplete="email" required>
+                <input type="email" id="email" name="email" class="form-input" value="<?= htmlspecialchars($email) ?>" autocomplete="email" required>
             </div>
 
             <div class="form-field">

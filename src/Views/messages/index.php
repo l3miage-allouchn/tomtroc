@@ -74,7 +74,7 @@
 
             <form method="post" class="thread__form">
                 <label for="content" class="visually-hidden">Votre message</label>
-                <input type="text" id="content" name="content" class="form-input thread__input" placeholder="Tapez votre message ici" autocomplete="off" required>
+                <input type="text" id="content" name="content" class="form-input thread__input" placeholder="Tapez votre message ici" maxlength="1000" autocomplete="off" required>
                 <button type="submit" class="button thread__send">Envoyer</button>
             </form>
         <?php endif; ?>

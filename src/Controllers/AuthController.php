@@ -4,59 +4,72 @@ class AuthController
 {
     public function register(): void
     {
+        $pseudo = '';
+        $email = '';
+        $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // ?? '' : si un champ manque dans la requête, pas de warning PHP
+            $pseudo = trim($_POST['pseudo'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+
+            $error = Validator::validateUser($pseudo, $email, $password, true);
+
             $userManager = new UserManager();
 
-            //Vérifier que l'email n'est pas déjà pris
-
-            if ($userManager->findByEmail($_POST['email']) !== null) {
+            if ($error === null && $userManager->findByEmail($email) !== null) {
                 $error = 'Cet email est déjà utilisé.';
-                require __DIR__ . '/../Views/auth/register.php';
-                return;
             }
 
-            //Création du nouvel utilisateur
+            if ($error === null) {
+                $user = new User();
+                $user->setPseudo($pseudo);
+                $user->setEmail($email);
+                $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
 
-            $user = new User();
-            $user->setPseudo($_POST['pseudo']);
-            $user->setEmail($_POST['email']);
-            $user->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
+                $id = $userManager->create($user);
+                $user->setId($id);
 
-            $id = $userManager->create($user);
-            $user->setId($id);
+                // nouvel identifiant de session à la connexion : protège contre la fixation de session
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user->getId();
+                $_SESSION['user_pseudo'] = $user->getPseudo();
 
-            $_SESSION['user_id'] = $user->getId();
-            $_SESSION['user_pseudo'] = $user->getPseudo();
-
-            header('Location: /tomtroc/public/');
-            return;
+                header('Location: /tomtroc/public/');
+                return;
+            }
         }
 
         require __DIR__ . '/../Views/auth/register.php';
     }
 
-
-
-    //password123  ──> password_hash( )──►  $2y$10$W2DncNKoR4Vg41BBD0Z.fOK9PBAMVTCTOuvlaikA/WlvtWul2ZlIa
-
-
     public function login(): void
     {
+        $email = '';
+        $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userManager = new UserManager();
-            $user = $userManager->findByEmail($_POST['email']);
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
 
-            if ($user === null || !password_verify($_POST['password'], $user->getPassword())) {
-                $error = 'Email ou mot de passe incorrect.';
-                require __DIR__ . '/../Views/auth/login.php';
-                return;
+            if ($email === '' || $password === '') {
+                $error = 'Veuillez remplir tous les champs.';
+            } else {
+                $userManager = new UserManager();
+                $user = $userManager->findByEmail($email);
+
+                if ($user === null || !password_verify($password, $user->getPassword())) {
+                    $error = 'Email ou mot de passe incorrect.';
+                } else {
+                    session_regenerate_id(true);
+                    $_SESSION['user_id'] = $user->getId();
+                    $_SESSION['user_pseudo'] = $user->getPseudo();
+
+                    header('Location: /tomtroc/public/');
+                    return;
+                }
             }
-
-            $_SESSION['user_id'] = $user->getId();
-            $_SESSION['user_pseudo'] = $user->getPseudo();
-
-            header('Location: /tomtroc/public/');
-            return;
         }
 
         require __DIR__ . '/../Views/auth/login.php';

@@ -31,12 +31,23 @@ class UserController
         $error = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // l'email doit rester unique : s'il appartient à quelqu'un d'autre, on refuse
-            $existingUser = $userManager->findByEmail($_POST['email']);
+            $pseudo = trim($_POST['pseudo'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
 
-            if ($existingUser !== null && $existingUser->getId() !== $user->getId()) {
-                $error = 'Cet email est déjà utilisé.';
-            } else {
+            // le mot de passe est facultatif ici (false) : vide = on garde l'ancien
+            $error = Validator::validateUser($pseudo, $email, $password, false);
+
+            // l'email doit rester unique : s'il appartient à quelqu'un d'autre, on refuse
+            if ($error === null) {
+                $existingUser = $userManager->findByEmail($email);
+
+                if ($existingUser !== null && $existingUser->getId() !== $user->getId()) {
+                    $error = 'Cet email est déjà utilisé.';
+                }
+            }
+
+            if ($error === null) {
                 try {
                     // l'avatar en premier : s'il est refusé, rien n'est modifié
                     $imageUploader = new ImageUploader();
@@ -47,12 +58,11 @@ class UserController
                         $user->setAvatar($newAvatar);
                     }
 
-                    $user->setPseudo($_POST['pseudo']);
-                    $user->setEmail($_POST['email']);
+                    $user->setPseudo($pseudo);
+                    $user->setEmail($email);
 
-                    // mot de passe vide = on garde l'ancien hash
-                    if ($_POST['password'] !== '') {
-                        $user->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
+                    if ($password !== '') {
+                        $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
                     }
 
                     $userManager->update($user);

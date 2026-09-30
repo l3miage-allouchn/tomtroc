@@ -13,24 +13,34 @@ class BookController
         $error = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = trim($_POST['title'] ?? '');
+            $author = trim($_POST['author'] ?? '');
+            $description = trim($_POST['description'] ?? '');
+            $status = $_POST['status'] ?? '';
+
+            // on remplit le livre dans tous les cas : en cas d'erreur, le formulaire est réaffiché avec ces valeurs
             $book->setUserId($_SESSION['user_id']);
-            $book->setTitle($_POST['title']);
-            $book->setAuthor($_POST['author']);
-            $book->setDescription($_POST['description']);
-            $book->setStatus($_POST['status']);
+            $book->setTitle($title);
+            $book->setAuthor($author);
+            $book->setDescription($description);
+            $book->setStatus($status);
 
-            try {
-                $imageUploader = new ImageUploader();
-                $book->setImage($imageUploader->upload($_FILES['image'] ?? null, 'books'));
+            $error = Validator::validateBook($title, $author, $status);
 
-                $bookManager = new BookManager();
-                $bookManager->create($book);
+            if ($error === null) {
+                try {
+                    $imageUploader = new ImageUploader();
+                    $book->setImage($imageUploader->upload($_FILES['image'] ?? null, 'books'));
 
-                header('Location: /tomtroc/public/mon-compte');
-                return;
-            } catch (RuntimeException $exception) {
-                // image refusée : on réaffiche le formulaire avec le message
-                $error = $exception->getMessage();
+                    $bookManager = new BookManager();
+                    $bookManager->create($book);
+
+                    header('Location: /tomtroc/public/mon-compte');
+                    return;
+                } catch (RuntimeException $exception) {
+                    // image refusée : on réaffiche le formulaire avec le message
+                    $error = $exception->getMessage();
+                }
             }
         }
 
@@ -55,27 +65,36 @@ class BookController
         $error = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $book->setTitle($_POST['title']);
-            $book->setAuthor($_POST['author']);
-            $book->setDescription($_POST['description']);
-            $book->setStatus($_POST['status']);
+            $title = trim($_POST['title'] ?? '');
+            $author = trim($_POST['author'] ?? '');
+            $description = trim($_POST['description'] ?? '');
+            $status = $_POST['status'] ?? '';
 
-            try {
-                $imageUploader = new ImageUploader();
-                $newImage = $imageUploader->upload($_FILES['image'] ?? null, 'books');
+            $book->setTitle($title);
+            $book->setAuthor($author);
+            $book->setDescription($description);
+            $book->setStatus($status);
 
-                // nouvelle image envoyée : on remplace l'ancienne
-                if ($newImage !== null) {
-                    $imageUploader->delete($book->getImage());
-                    $book->setImage($newImage);
+            $error = Validator::validateBook($title, $author, $status);
+
+            if ($error === null) {
+                try {
+                    $imageUploader = new ImageUploader();
+                    $newImage = $imageUploader->upload($_FILES['image'] ?? null, 'books');
+
+                    // nouvelle image envoyée : on remplace l'ancienne
+                    if ($newImage !== null) {
+                        $imageUploader->delete($book->getImage());
+                        $book->setImage($newImage);
+                    }
+
+                    $bookManager->update($book);
+
+                    header('Location: /tomtroc/public/mon-compte');
+                    return;
+                } catch (RuntimeException $exception) {
+                    $error = $exception->getMessage();
                 }
-
-                $bookManager->update($book);
-
-                header('Location: /tomtroc/public/mon-compte');
-                return;
-            } catch (RuntimeException $exception) {
-                $error = $exception->getMessage();
             }
         }
 

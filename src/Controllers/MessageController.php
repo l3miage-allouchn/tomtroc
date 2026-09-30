@@ -43,7 +43,7 @@ class MessageController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $content = trim($_POST['content'] ?? '');
 
-            if ($content !== '') {
+            if (Validator::validateMessage($content) === null) {
                 $message = new Message();
                 $message->setSenderId($currentUserId);
                 $message->setReceiverId($otherUserId);
