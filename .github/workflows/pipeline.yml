@@ -1,9 +1,11 @@
-# Pipeline CI de TomTroc (GitHub Actions)
-# se lance à chaque push sur la branche devsecops, et à chaque pull request vers elle
+# Pipeline CI/CD de TomTroc (GitHub Actions)
+# se lance à chaque push sur la branche devsecops, à chaque pull request vers elle,
+# et à la demande (bouton "Run workflow" de l'onglet Actions)
 #
 #   lint ──> tests ──┐
-#   secrets ─────────┼──> build + scan de l'image
+#   secrets ─────────┼──> build + scan de l'image ──> déploiement (recette Docker)
 #   sast ────────────┘
+#   en cas d'échec d'un job : alerte Discord
 #
 # les actions GitHub sont épinglées sur l'empreinte (SHA) de leur code, et non sur une étiquette comme "v5" :
 # une étiquette peut être déplacée par son auteur vers un autre code (attaque de la chaîne d'approvisionnement)
@@ -14,6 +16,7 @@ on:
     branches: [devsecops]
   pull_request:
     branches: [devsecops]
+  workflow_dispatch:
 
 # droits minimum : le pipeline peut seulement lire le code
 permissions:
@@ -86,7 +89,7 @@ jobs:
           docker run --rm -v "$PWD":/src -w /src semgrep/semgrep:1.140.0
           semgrep scan --config p/php --config p/owasp-top-ten
           --metrics=off --error
-          --exclude=tests --exclude=sql --exclude=docs
+          --exclude=tests --exclude=sql --exclude=docs --exclude=scripts
 
   build:
     name: Build et scan de l'image (Docker, Trivy)
@@ -111,3 +114,92 @@ jobs:
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.67.2
           image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
           tomtroc:${{ github.sha }}
+
+      - name: Compter toutes les failles de l'image (indicateur, ne bloque pas)
+        # always() : le compte est fait même si le scan précédent a bloqué le pipeline
+        if: always()
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD":/out aquasec/trivy:0.67.2 \
+            image --scanners vuln --format json --output /out/trivy.json tomtroc:${{ github.sha }}
+          # nombre de failles par gravité, affiché dans le résumé du pipeline (onglet "Summary")
+          {
+            echo "### Failles connues dans l'image (Trivy)"
+            echo "| Gravité | Total | Corrigeables |"
+            echo "|---|---|---|"
+            for g in CRITICAL HIGH MEDIUM LOW; do
+              total=$(jq --arg g "$g" '[.Results[]?.Vulnerabilities[]? | select(.Severity == $g)] | length' trivy.json)
+              fix=$(jq --arg g "$g" '[.Results[]?.Vulnerabilities[]? | select(.Severity == $g and .FixedVersion != null and .FixedVersion != "")] | length' trivy.json)
+              echo "| $g | $total | $fix |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Déploiement (recette Docker)
+    # seulement après un push (pas pour une pull request ni pour un lancement manuel)
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-24.04
+    # environnement GitHub "recette" : chaque déploiement est enregistré (onglet "Deployments"),
+    # ce qui sert à mesurer la fréquence de déploiement
+    environment: recette
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Créer le fichier .env avec des mots de passe aléatoires
+        # aucun mot de passe n'est écrit dans le dépôt : ils sont générés pour ce déploiement
+        run: |
+          {
+            echo "DB_USER=tomtroc"
+            echo "DB_PASSWORD=$(openssl rand -hex 16)"
+            echo "DB_ROOT_PASSWORD=$(openssl rand -hex 16)"
+          } > .env
+
+      - name: Démarrer TomTroc et MariaDB (docker compose)
+        # --wait : attend que la base soit prête (healthcheck) et que le site soit démarré
+        run: docker compose up -d --build --wait
+
+      - name: Tester le site déployé (smoke test)
+        # la page /livres lit la base : si elle affiche un livre de démo, le site ET la base fonctionnent
+        run: |
+          for i in $(seq 1 10); do
+            if curl -fsS http://localhost:8080/tomtroc/public/livres | grep -q "Esther"; then
+              echo "Site déployé et fonctionnel"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "Le site ne répond pas correctement"
+          exit 1
+
+      - name: Afficher les journaux des conteneurs en cas d'échec
+        if: failure()
+        run: docker compose logs
+
+      - name: Arrêter l'environnement de recette
+        if: always()
+        run: docker compose down -v
+
+  notify:
+    name: Alerte Discord en cas d'échec
+    # failure() : ce job ne tourne que si au moins un job précédent a échoué
+    if: failure()
+    needs: [lint, tests, secrets, sast, build, deploy]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Envoyer un message sur Discord
+        # l'adresse du webhook est un secret du dépôt (Settings > Secrets and variables > Actions)
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          BRANCHE: ${{ github.ref_name }}
+          AUTEUR: ${{ github.actor }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "Secret DISCORD_WEBHOOK_URL absent : pas d'alerte envoyée"
+            exit 0
+          fi
+          # jq construit le JSON : les valeurs sont échappées correctement (pas d'injection)
+          jq -n --arg b "$BRANCHE" --arg a "$AUTEUR" --arg u "$URL" \
+            '{content: ("❌ Pipeline TomTroc en échec sur la branche " + $b + " (" + $a + ")\n" + $u)}' \
+            | curl -fsS -H "Content-Type: application/json" -d @- "$WEBHOOK"

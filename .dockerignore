@@ -12,3 +12,4 @@ Dockerfile
 .dockerignore
 phpcs.xml
 phpunit.xml
+scripts

@@ -1,0 +1,161 @@
+<!doctype html>
+<!-- modèle du tableau de bord : les {{...}} sont remplacés par scripts/kpi.py -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau de bord DevSecOps</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7;
+    --surface: #fcfcfb;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11, 11, 11, 0.10);
+    --good: #0ca30c;
+    --good-text: #006300;
+    --critical: #d03b3b;
+    --neutral: #52514e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d;
+      --surface: #1a1a19;
+      --ink: #ffffff;
+      --ink-2: #c3c2b7;
+      --grid: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255, 255, 255, 0.10);
+      --good-text: #0ca30c;
+      --critical: #e66767;
+      --neutral: #c3c2b7;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --good-text: #0ca30c;
+    --critical: #e66767;
+    --neutral: #c3c2b7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 1080px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 40px 0 12px; }
+  .sous-titre { color: var(--ink-2); margin: 0; }
+  .tuiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .tuile, .panneau {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .tuile h3 { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); margin: 0; }
+  .valeur { font-size: 1.9rem; font-weight: 600; margin: 6px 0 2px; }
+  .objectif, .detail { color: var(--ink-2); font-size: 0.82rem; margin: 2px 0; }
+  .statut { font-size: 0.82rem; font-weight: 600; }
+  .statut.ok { color: var(--good-text); }
+  .statut.ko { color: var(--critical); }
+  .statut.neutre { color: var(--neutral); }
+  .legende { display: flex; gap: 16px; font-size: 0.82rem; color: var(--ink-2); margin-bottom: 8px; }
+  .legende span::before {
+    content: ""; display: inline-block; width: 10px; height: 10px;
+    border-radius: 2px; margin-right: 6px; vertical-align: -1px;
+  }
+  .legende .ok::before { background: var(--good); }
+  .legende .ko::before { background: var(--critical); }
+  .graphique { position: relative; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .grille { stroke: var(--grid); stroke-width: 1; }
+  .base { stroke: var(--axis); stroke-width: 1; }
+  .axe { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .barre .cible { fill: transparent; }
+  .barre.ok path { fill: var(--good); }
+  .barre.ko path { fill: var(--critical); }
+  .barre:hover .cible, .barre:focus .cible { fill: var(--grid); opacity: 0.5; }
+  .barre:focus { outline: none; }
+  .infobulle {
+    position: absolute; pointer-events: none; display: none;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 10px; font-size: 0.82rem; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+  .table-defile { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th { color: var(--ink-2); font-weight: 600; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  a { color: inherit; }
+  .vide, .note { color: var(--ink-2); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tableau de bord DevSecOps — TomTroc</h1>
+  <p class="sous-titre">Dépôt {{DEPOT}}, branche {{BRANCHE}} · {{NB}} exécution(s) du pipeline · mis à jour le {{DATE}}</p>
+
+  <section class="tuiles">{{TUILES}}</section>
+
+  <h2>Durée de chaque exécution du pipeline (minutes)</h2>
+  <div class="panneau">
+    <div class="legende"><span class="ok">✓ réussie</span><span class="ko">✕ en échec</span></div>
+    <div class="graphique">{{GRAPHIQUE}}<div class="infobulle" id="infobulle"></div></div>
+  </div>
+
+  <h2>Historique des exécutions</h2>
+  <div class="panneau table-defile">
+    <table>
+      <thead><tr><th>Date</th><th>Commit</th><th>Déclencheur</th><th>Durée (min)</th><th>Résultat</th><th>Job en échec</th></tr></thead>
+      <tbody>{{LIGNES}}</tbody>
+    </table>
+  </div>
+
+  <p class="note">Données : API GitHub Actions. Définitions et objectifs des indicateurs : docs/devsecops/3-kpi-roadmap.md.
+    Régénérer : <code>python scripts/kpi.py</code></p>
+</main>
+<script>
+  // infobulle au survol (ou au clavier) de chaque barre du graphique
+  const bulle = document.getElementById('infobulle');
+  const zone = bulle.parentElement;
+  document.querySelectorAll('.barre').forEach(function (barre) {
+    function montrer() {
+      bulle.textContent = barre.dataset.info;
+      bulle.style.display = 'block';
+      const b = barre.getBoundingClientRect();
+      const z = zone.getBoundingClientRect();
+      let gauche = b.left - z.left + b.width / 2 - bulle.offsetWidth / 2;
+      gauche = Math.max(0, Math.min(gauche, z.width - bulle.offsetWidth));
+      bulle.style.left = gauche + 'px';
+      bulle.style.top = '-8px';
+    }
+    function cacher() { bulle.style.display = 'none'; }
+    barre.addEventListener('mouseenter', montrer);
+    barre.addEventListener('focus', montrer);
+    barre.addEventListener('mouseleave', cacher);
+    barre.addEventListener('blur', cacher);
+  });
+</script>
+</body>
+</html>
