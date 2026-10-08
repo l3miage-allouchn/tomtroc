@@ -42,7 +42,9 @@
                             <td>
                                 <div class="library__actions">
                                     <a href="/tomtroc/public/livre/<?= $book->getId() ?>/modifier" class="library__edit">Éditer</a>
-                                    <form method="post" action="/tomtroc/public/livre/<?= $book->getId() ?>/supprimer">
+                                    <form method="post" action="/tomtroc/public/livre/<?= $book->getId() ?>/supprimer"
+                                          class="js-confirm-delete"
+                                          data-confirm="Voulez-vous vraiment supprimer « <?= htmlspecialchars($book->getTitle()) ?> » ? Cette action est définitive.">
                                         <button type="submit" class="library__delete">Supprimer</button>
                                     </form>
                                 </div>
