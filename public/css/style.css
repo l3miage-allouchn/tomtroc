@@ -218,6 +218,13 @@ img {
     font-size: 14px;
 }
 
+/* petit texte d'aide sous un champ ("8 caractères minimum") */
+.form-hint {
+    margin: 6px 0 0;
+    color: var(--color-grey);
+    font-size: 12px;
+}
+
 /* =========================================================
    6. Connexion et inscription
    ========================================================= */

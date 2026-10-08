@@ -21,7 +21,9 @@
 
             <div class="form-field">
                 <label for="password" class="form-label">Mot de passe</label>
-                <input type="password" id="password" name="password" class="form-input" autocomplete="new-password" required>
+                <input type="password" id="password" name="password" class="form-input"
+                       minlength="8" autocomplete="new-password" aria-describedby="password-hint" required>
+                <p id="password-hint" class="form-hint">8 caractères minimum</p>
             </div>
 
             <button type="submit" class="button button--block">S'inscrire</button>

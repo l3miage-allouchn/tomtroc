@@ -25,8 +25,8 @@
 
             <div class="form-field">
                 <label for="password" class="form-label">Mot de passe</label>
-                <input type="password" id="password" name="password" class="form-input form-input--grey" placeholder="••••••••" autocomplete="new-password" aria-describedby="password-help">
-                <p id="password-help" class="visually-hidden">Laissez vide pour garder votre mot de passe actuel.</p>
+                <input type="password" id="password" name="password" class="form-input form-input--grey" placeholder="••••••••" minlength="8" autocomplete="new-password" aria-describedby="password-help">
+                <p id="password-help" class="form-hint">8 caractères minimum. Laissez vide pour garder votre mot de passe actuel.</p>
             </div>
 
             <div class="form-field">
