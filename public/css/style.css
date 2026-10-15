@@ -2,19 +2,20 @@
    1. Variables : les couleurs de la maquette
    ========================================================= */
 :root {
-    --color-green: #00AC66;
+    /* couleurs de la maquette légèrement foncées pour un contraste suffisant (WCAG AA, testé avec WAVE) */
+    --color-green: #007E4B;
     --color-green-dark: #006D41;
     --color-text: #292929;
     --color-title: #000000;
-    --color-grey: #A6A6A6;
+    --color-grey: #6E6E6E;
     --color-border: #D9D9D9;
     --color-beige: #F5F3EF;
     --color-background: #FAF9F7;
     --color-white: #FFFFFF;
     --color-input: #EDF2F6;
     --color-line: #F0F0F0;
-    --color-available: #6DC5A1;
-    --color-unavailable: #C56D6D;
+    --color-available: #348363;
+    --color-unavailable: #BC5757;
     --color-danger: #CB2D2D;
 
     --font-text: 'Inter', Arial, sans-serif;
@@ -76,7 +77,7 @@ img {
 .site-header__inner {
     display: flex;
     align-items: center;
-    width: min(var(--content-width), 100% - 40px);
+    max-width: var(--content-width);
     height: 80px;
     margin: 0 auto;
 }
@@ -234,9 +235,9 @@ img {
     min-height: 886px;
 }
 
-/* le formulaire commence à la même position que le logo (150px sur 1440px) */
+/* le formulaire commence à 150px du bord gauche, comme le logo sur la maquette */
 .auth__content {
-    padding: 128px 20px 60px max(20px, calc(100% - 570px));
+    padding: 128px 20px 60px 150px;
 }
 
 .auth__title {
@@ -367,7 +368,7 @@ img {
    9. Nos livres à l'échange
    ========================================================= */
 .books-page {
-    width: min(914px, 100% - 40px);
+    max-width: 914px;
     margin: 0 auto;
     padding: 130px 0 75px;
 }
@@ -417,7 +418,7 @@ img {
     display: flex;
     align-items: center;
     gap: 4px;
-    width: min(var(--content-width), 100% - 40px);
+    max-width: var(--content-width);
     height: 44px;
     margin: 0 auto;
     color: var(--color-grey);
@@ -453,9 +454,9 @@ img {
     object-fit: cover;
 }
 
-/* le texte s'arrête à la même position que le menu (150px du bord droit sur 1440px) */
+/* le texte s'arrête à 150px du bord droit, comme le menu sur la maquette */
 .book-detail__content {
-    padding: 61px max(20px, calc(100% - 570px)) 80px 85px;
+    padding: 61px 150px 80px 85px;
 }
 
 .book-detail__title {
@@ -645,7 +646,7 @@ img {
 }
 
 .home-values__inner {
-    width: min(390px, 100% - 40px);
+    max-width: 390px;
     margin: 0 auto;
     padding: 78px 0 88px;
 }
@@ -659,12 +660,11 @@ img {
     line-height: 19px;
 }
 
-/* la signature, avec le cœur qui déborde un peu à droite comme sur la maquette */
+/* la signature à gauche, le cœur à droite */
 .home-values__signature {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    width: calc(100% + 73px);
     margin-top: 21px;
 }
 
@@ -691,7 +691,7 @@ img {
 }
 
 .account-page {
-    width: min(var(--content-width), 100% - 40px);
+    max-width: var(--content-width);
     margin: 0 auto;
     padding: 91px 0 104px;
 }
@@ -715,7 +715,7 @@ img {
     grid-template-columns: 341px 1fr;
     align-items: start;
     gap: 28px;
-    width: min(var(--content-width), 100% - 40px);
+    max-width: var(--content-width);
     margin: 0 auto;
     padding: 103px 0 104px;
 }
@@ -912,7 +912,7 @@ img {
    13. Formulaire d'un livre (ajout et modification)
    ========================================================= */
 .book-form-page {
-    width: min(var(--content-width), 100% - 40px);
+    max-width: var(--content-width);
     margin: 0 auto;
     padding: 40px 0 92px;
 }
@@ -1015,13 +1015,17 @@ img {
 
 /* liste des conversations (308px) à gauche, fil de discussion à droite
    le fond beige prend toute la largeur, le contenu reste aligné sur les 1140px du site */
+.messaging-page {
+    background-color: var(--color-beige);
+}
+
 .messaging {
     display: grid;
     grid-template-columns: 308px 1fr;
     column-gap: 44px;
+    max-width: var(--content-width);
     height: 893px;
-    padding: 0 max(20px, calc((100% - var(--content-width)) / 2));
-    background-color: var(--color-beige);
+    margin: 0 auto;
 }
 
 .messaging__sidebar {
@@ -1194,7 +1198,7 @@ img {
    15. Pages de texte (mentions légales, confidentialité) et page 404
    ========================================================= */
 .text-page {
-    width: min(760px, 100% - 40px);
+    max-width: 760px;
     margin: 0 auto;
     padding: 91px 0 104px;
 }
